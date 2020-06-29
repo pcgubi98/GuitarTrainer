@@ -2,6 +2,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// this class uses standard scientific pitch notation
+// this class also uses a proprietary numerical pitch system where C0 is 0
 public class Guitar {
 
 
@@ -30,6 +32,7 @@ public class Guitar {
 
         numToSci = new HashMap<>();
 
+        //TODO: add negative octaves by subtracting 11
         for(int i = 0; i < 100; i++) {
             numToSci.put(i, sciPitchNotations[i % 12] + (i / 12));
             sciToNum.put(sciPitchNotations[i % 12] + (i / 12), i);
@@ -50,18 +53,26 @@ public class Guitar {
         return numToSci.get(numericalPitch);
     }
 
-    public List<Integer[]> getFrets(int numericalPitch) {
-        Integer[] ret = new Integer[6];
+    //given a numerical pitch returns what fret it is on on each string
+    //if it can not on a string
+    public Integer[] getFrets(int numericalPitch) {
+        Integer[] ret = new Integer[strings];
+        //iterate through strings
         for(int i = 0; i < ret.length; i++) {
             int stringOffset = 5 * i;
             if(i >= 4) {
                 stringOffset--;
             }
-            int fret = (numericalPitch - (28 + stringOffset + offsets[i])
-            if( fret < ) {
-                return
+            // if i played this note on this string what fret would it be on
+            int fret = (numericalPitch - (28 + stringOffset + offsets[i]);
+            // is the fret negative or greater than actual num of frets
+            if( fret <=  frets && fret >= 0) {
+                ret[i] = fret;
+            } else {
+                ret[i] = -1;
             }
         }
+        return ret;
     }
 
     public int getFrets() {

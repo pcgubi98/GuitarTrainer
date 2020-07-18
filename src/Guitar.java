@@ -31,6 +31,7 @@ public class Guitar {
         offsets = new Integer[strings];
 
         numToSci = new HashMap<>();
+        sciToNum = new HashMap<>();
 
         //TODO: add negative octaves by subtracting 11
         for(int i = 0; i < 100; i++) {
@@ -64,7 +65,7 @@ public class Guitar {
                 stringOffset--;
             }
             // if i played this note on this string what fret would it be on
-            int fret = (numericalPitch - (28 + stringOffset + offsets[i]);
+            int fret = (numericalPitch - (28 + stringOffset + offsets[i]));
             // is the fret negative or greater than actual num of frets
             if( fret <=  frets && fret >= 0) {
                 ret[i] = fret;

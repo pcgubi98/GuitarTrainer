@@ -10,6 +10,7 @@ public class GameManager {
         //initialize gameList
         List<Game> gameList = new ArrayList<>();
         gameList.add(new NoteName());
+        gameList.add(new NoteNameChord());
 
         Game activeGame = null;
 

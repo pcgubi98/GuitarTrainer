@@ -11,6 +11,7 @@ public class GameManager {
         List<Game> gameList = new ArrayList<>();
         gameList.add(new NoteName());
         gameList.add(new NoteNameChord());
+        gameList.add(new NoteNameScale());
 
         Game activeGame = null;
 

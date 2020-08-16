@@ -2,6 +2,8 @@ import java.util.*;
 
 public class GameManager {
 
+    //TODO: reorganize this class
+
 
     public static void main(String[] args) {
 
@@ -12,6 +14,7 @@ public class GameManager {
         gameList.add(new NoteName());
         gameList.add(new NoteNameChord());
         gameList.add(new NoteNameScale());
+        gameList.add(new PlayScale());
 
         Game activeGame = null;
 

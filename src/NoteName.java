@@ -11,6 +11,8 @@ public class NoteName implements Game{
     private String answerF = "";
     private String answerSciF = "";
     private boolean sciSetting = false;
+    //replace '.' with '#' and ',' with 'b'
+    private boolean subSetting = true;
     private Guitar guitar;
 
     //TODO: SHarp flats enharmonic equivalents
@@ -34,6 +36,12 @@ public class NoteName implements Game{
 
     @Override
     public void handleInput(String in) {
+
+        if(subSetting) {
+            in = in.replace('.', '#');
+            in = in.replace(',', 'b');
+        }
+
         in = in.toUpperCase();
         if(in.equals("S")) {
             sciSetting = !sciSetting;

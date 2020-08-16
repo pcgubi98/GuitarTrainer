@@ -3,9 +3,15 @@ import java.util.List;
 import java.util.Map;
 
 // this class uses standard scientific pitch notation
-// this class also uses a proprietary numerical pitch system where C0 is 0
+// this class also uses a self defined numerical pitch system where C0 is 0
 public class Guitar {
 
+
+
+    //TODO: get random scale
+    //TODO: get random chord
+    //TODO: get note named pitches of a scale and chord
+    //TODO: factor out common stuff
 
     //number of frets on the guitar
     Integer frets;
@@ -202,8 +208,8 @@ public class Guitar {
 
         ret.put("Locrian", new Integer[]{0, 1, 3, 5, 6, 8, 10});
 
-        ret.put("Ionian", new Integer[]{0, 2, 4, 7, 9});
-        ret.put("Aeolian", new Integer[]{0, 3, 5, 7, 10});
+        ret.put("Major Pentatonic", new Integer[]{0, 2, 4, 7, 9});
+        ret.put("Minor Pentatonic", new Integer[]{0, 3, 5, 7, 10});
 
         ret.put("Minor Blues Scale", new Integer[]{0, 3, 5, 6, 7, 10});
 

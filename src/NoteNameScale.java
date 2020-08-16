@@ -18,6 +18,7 @@ public class NoteNameScale implements Game{
     private Integer[] pitches = {};
     private String scale = "";
     private boolean sciSetting = false;
+    private boolean subSetting = true;
     private Guitar guitar;
 
     //TODO: SHarp flats enharmonic equivalents
@@ -41,6 +42,12 @@ public class NoteNameScale implements Game{
 
     @Override
     public void handleInput(String in) {
+
+        if(subSetting) {
+            in = in.replace('.', '#');
+            in = in.replace(',', 'b');
+        }
+
         in = in.toUpperCase();
         if(in.equals("S")) {
             sciSetting = !sciSetting;

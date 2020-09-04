@@ -15,6 +15,7 @@ public class GameManager {
         gameList.add(new NoteNameChord());
         gameList.add(new NoteNameScale());
         gameList.add(new PlayScale());
+        gameList.add(new TriadGame());
 
         Game activeGame = null;
 

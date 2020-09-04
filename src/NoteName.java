@@ -13,14 +13,14 @@ public class NoteName implements Game{
     private boolean sciSetting = false;
     //replace '.' with '#' and ',' with 'b'
     private boolean subSetting = true;
-    private Guitar guitar;
+    private Music music;
 
     //TODO: SHarp flats enharmonic equivalents
 
 
     public NoteName() {
 
-        guitar = new Guitar();
+        music = new Music();
     }
 
     @Override
@@ -65,15 +65,15 @@ public class NoteName implements Game{
     }
 
     private void generateQuestionAndAnswer() {
-        int fret = ThreadLocalRandom.current().nextInt(0, guitar.getFrets());
-        int string = ThreadLocalRandom.current().nextInt(0, guitar.getStrings());
+        int fret = ThreadLocalRandom.current().nextInt(0, music.getFrets());
+        int string = ThreadLocalRandom.current().nextInt(0, music.getStrings());
         this.question = "What is the note on the " + (string + 1) + " string at the " + fret + " fret?";
-        int numPitch = guitar.getNote(string, fret);
+        int numPitch = music.getNote(string, fret);
 
-        this.answer = guitar.getSimplePitch(numPitch);
-        this.answerF = guitar.getSimplePitchF(numPitch).toUpperCase();
-        this.answerSci = guitar.getSciPitch(numPitch);
-        this.answerSciF = guitar.getSciPitchF(numPitch).toUpperCase();
+        this.answer = music.getSimplePitch(numPitch);
+        this.answerF = music.getSimplePitchF(numPitch).toUpperCase();
+        this.answerSci = music.getSciPitch(numPitch);
+        this.answerSciF = music.getSciPitchF(numPitch).toUpperCase();
 
     }
 

@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class NoteNameChord implements Game{
@@ -19,14 +18,14 @@ public class NoteNameChord implements Game{
     private String chord = "";
     private boolean sciSetting = false;
     private boolean subSetting = true;
-    private Guitar guitar;
+    private Music music;
 
     //TODO: SHarp flats enharmonic equivalents
 
 
     public NoteNameChord() {
 
-        guitar = new Guitar();
+        music = new Music();
     }
 
     @Override
@@ -85,21 +84,21 @@ public class NoteNameChord implements Game{
     }
 
     private void generateQuestionAndAnswerNote() {
-        int fret = ThreadLocalRandom.current().nextInt(0, guitar.getFrets());
-        int string = ThreadLocalRandom.current().nextInt(0, guitar.getStrings());
+        int fret = ThreadLocalRandom.current().nextInt(0, music.getFrets());
+        int string = ThreadLocalRandom.current().nextInt(0, music.getStrings());
         this.question = "What is the note on the " + (string + 1) + " string at the " + fret + " fret?";
-        int numPitch = guitar.getNote(string, fret);
+        int numPitch = music.getNote(string, fret);
 
         this.answerNum = numPitch;
-        this.answer = guitar.getSimplePitch(numPitch);
-        this.answerF = guitar.getSimplePitchF(numPitch).toUpperCase();
-        this.answerSci = guitar.getSciPitch(numPitch);
-        this.answerSciF = guitar.getSciPitchF(numPitch).toUpperCase();
+        this.answer = music.getSimplePitch(numPitch);
+        this.answerF = music.getSimplePitchF(numPitch).toUpperCase();
+        this.answerSci = music.getSciPitch(numPitch);
+        this.answerSciF = music.getSciPitchF(numPitch).toUpperCase();
 
     }
 
     private void generateQuestionAndAnswerChord() {
-        Map<String, Integer[]> chords = guitar.getChords();
+        Map<String, Integer[]> chords = music.getChords();
         List<String> chordList = new ArrayList(chords.keySet());
         int rand = ThreadLocalRandom.current().nextInt(0, chordList.size());
         this.chord = chordList.get(rand);
@@ -107,7 +106,7 @@ public class NoteNameChord implements Game{
         rand = ThreadLocalRandom.current().nextInt(0, pitches.length);
         int offset = pitches[rand];
         int chordRoot = this.answerNum - offset;
-        String chordWithRoot = guitar.getSimplePitch(chordRoot) + " " + chord;
+        String chordWithRoot = music.getSimplePitch(chordRoot) + " " + chord;
 
         this.question = "Play a " + chordWithRoot + " using that note.";
         this.question += " Press any key to continue.";
@@ -163,7 +162,7 @@ public class NoteNameChord implements Game{
     private void printPitches() {
         System.out.println("The intervals in a " + this.chord + " are: ");
         for(int i = 0; i < pitches.length; i++) {
-            System.out.println(guitar.intervals[pitches[i]]);
+            System.out.println(music.intervals[pitches[i]]);
         }
     }
 }

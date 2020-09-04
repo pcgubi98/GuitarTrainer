@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PlayScale implements Game{
@@ -14,14 +13,14 @@ public class PlayScale implements Game{
     private String[] pitches = {};
     private String scale = "";
     private boolean sciSetting = false;
-    private Guitar guitar;
+    private Music music;
 
     //TODO: SHarp flats enharmonic equivalents
 
 
     public PlayScale() {
 
-        guitar = new Guitar();
+        music = new Music();
     }
 
     @Override
@@ -65,10 +64,10 @@ public class PlayScale implements Game{
 
     private void generateScale() {
 
-        String[] notes = guitar.sciPitchNotations;
+        String[] notes = music.sciPitchNotations;
         int noteNum = ThreadLocalRandom.current().nextInt(0, notes.length);
         String note = notes[noteNum];
-        Map<String, Integer[]> scales = guitar.getScales();
+        Map<String, Integer[]> scales = music.getScales();
         List<String> scaleList = new ArrayList(scales.keySet());
         int rand = ThreadLocalRandom.current().nextInt(0, scaleList.size());
         String scale = scaleList.get(rand);

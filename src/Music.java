@@ -1,10 +1,9 @@
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 // this class uses standard scientific pitch notation
 // this class also uses a self defined numerical pitch system where C0 is 0
-public class Guitar {
+public class Music {
 
 
 
@@ -12,6 +11,7 @@ public class Guitar {
     //TODO: get random chord
     //TODO: get note named pitches of a scale and chord
     //TODO: factor out common stuff
+    //TODO: add generic getKey method
 
     //number of frets on the guitar
     Integer frets;
@@ -37,12 +37,18 @@ public class Guitar {
     // eg "Major Scale" -> [0, 2, 4, 5, 7, 9, 11]
     Map<String, Integer[]> scales;
 
+    Map<String, Integer[]> simpleChords;
+    Map<String, Integer[]> simplestChords;
+    Map<String, Integer[]> simpleScales;
+
+    //sharps by default
     String[] sciPitchNotations = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    //flats
     String[] sciPitchNotationsF = {"C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"};
 
     String[] intervals;
 
-    public Guitar() {
+    public Music() {
 
         //0 being the open string and 1 being the first fret
         frets = 21;
@@ -63,7 +69,10 @@ public class Guitar {
         numToSimpF = new HashMap<>();
 
         chords = createChordsMap();
+        simpleChords = createSimpleChordsMap();
+        simplestChords = createSimplestChordsMap();
         scales = createScalesMap();
+        simpleScales = createSimpleScalesMap();
         intervals = createIntervalsMap();
 
         //TODO: add negative octaves by subtracting 11
@@ -77,6 +86,13 @@ public class Guitar {
             numToSimpF.put(i, sciPitchNotationsF[i % 12]);
         }
     }
+
+    public static  < E, V > E getRandomMapKey(Map<E, V> map) {
+        List<E> list = new ArrayList(map.keySet());
+        int rand = ThreadLocalRandom.current().nextInt(0, list.size());
+        return list.get(rand);
+    }
+
 
     //given a string and fret returns the numerical pitch
     public int getNote(int string, int fret) {
@@ -139,6 +155,80 @@ public class Guitar {
 
     public String[] getIntervals() {return intervals;}
 
+    public int getRandomFret() {
+        return ThreadLocalRandom.current().nextInt(0, this.getFrets());
+    }
+
+    public int getRandomString() {
+        return ThreadLocalRandom.current().nextInt(0, this.getStrings());
+    }
+
+    public String getRandomScale() {
+        List<String> scaleList = new ArrayList(scales.keySet());
+        int rand = ThreadLocalRandom.current().nextInt(0, scaleList.size());
+        return scaleList.get(rand);
+    }
+
+    public String getRandomChord() {
+        List<String> chordList = new ArrayList(chords.keySet());
+        int rand = ThreadLocalRandom.current().nextInt(0, chordList.size());
+        return chordList.get(rand);
+    }
+
+    public String getRandomSimpleChord() {
+        List<String> chordList = new ArrayList(simpleChords.keySet());
+        int rand = ThreadLocalRandom.current().nextInt(0, chordList.size());
+        return chordList.get(rand);
+    }
+
+    public String getRandomSimplestChord() {
+        List<String> chordList = new ArrayList(simpleChords.keySet());
+        int rand = ThreadLocalRandom.current().nextInt(0, chordList.size());
+        return chordList.get(rand);
+    }
+
+    public String[] getIntervalsOfScale(String scale) {
+
+        Integer[] ints = scales.get(scale);
+        String[] strings = new String[ints.length];
+        for (int i = 0; i < ints.length; i++) {
+            strings[i] = intervals[ints[i]];
+
+        }
+        return strings;
+    }
+
+    public String[] getIntervalsOfChord(String chord) {
+        Integer[] ints = chords.get(chord);
+        String[] strings = new String[ints.length];
+        for (int i = 0; i < ints.length; i++) {
+            strings[i] = intervals[ints[i]];
+
+        }
+        return strings;
+    }
+
+    public String[] getNotesOfScale(int numPitch, String scale) {
+        Integer[] ints = scales.get(scale);
+        String[] strings = new String[ints.length];
+        for(int i = 0; i < ints.length; i++) {
+            strings[i] = getSimplePitch(numPitch + ints[i]);
+        }
+        return strings;
+    }
+
+    public String[] getNotesOfChord(int numPitch, String chord) {
+
+        Integer[] ints = chords.get(chord);
+        String[] strings = new String[ints.length];
+
+        for(int i = 0; i < ints.length; i++) {
+            strings[i] = getSimplePitch(numPitch + ints[i]);
+        }
+        return strings;
+    }
+
+
     public Map<String, Integer[]> createChordsMap() {
         Map<String, Integer[]> ret = new HashMap();
 
@@ -178,8 +268,8 @@ public class Guitar {
         ret.put("Minor Major Seventh", new Integer[]{0, 3, 7, 11});
         ret.put("Minor Ninth", new Integer[]{0, 3, 7, 10, 2});
         ret.put("Minor Seventh", new Integer[]{0, 3, 7, 10});
-        ret.put("Minor Sixth", new Integer[]{0, 3, 7, 9});
-        ret.put("Minor Sixth Ninth", new Integer[]{0, 3, 7, 9, 2});
+        ret.put("Minor Sixth", new Integer[]{0, 3, 7, 8});
+        ret.put("Minor Sixth Ninth", new Integer[]{0, 3, 7, 8, 2});
         ret.put("Minor Thirteenth", new Integer[]{0, 3, 7, 10, 2, 5, 9});
         ret.put("Mu Chord", new Integer[]{0, 2, 4, 7});
         ret.put("Mystic Chord", new Integer[]{0, 6, 10, 4, 9, 2});
@@ -194,6 +284,33 @@ public class Guitar {
 
         return ret;
     }
+
+    public Map<String, Integer[]> createSimpleChordsMap() {
+        Map<String, Integer[]> ret = new HashMap();
+
+
+        ret.put("Major Triad", new Integer[]{0, 4, 7});
+        ret.put("Minor Triad", new Integer[]{0, 3, 7});
+        ret.put("Sus4 Chord", new Integer[]{0, 5, 7});
+        ret.put("Sus2 Chord", new Integer[]{0, 2, 7});
+        ret.put("Major Seventh", new Integer[]{0, 4, 7, 11});
+        ret.put("Major Sixth", new Integer[]{0, 4, 7, 9});
+        ret.put("Minor Seventh", new Integer[]{0, 3, 7, 10});
+        ret.put("Minor Sixth", new Integer[]{0, 3, 7, 8});
+
+        return ret;
+    }
+
+    public Map<String, Integer[]> createSimplestChordsMap() {
+        Map<String, Integer[]> ret = new HashMap();
+
+
+        ret.put("Major Triad", new Integer[]{0, 4, 7});
+        ret.put("Minor Triad", new Integer[]{0, 3, 7});
+
+        return ret;
+    }
+
 
     public Map<String, Integer[]> createScalesMap() {
         Map<String, Integer[]> ret = new HashMap();
@@ -212,6 +329,18 @@ public class Guitar {
         ret.put("Minor Pentatonic", new Integer[]{0, 3, 5, 7, 10});
 
         ret.put("Minor Blues Scale", new Integer[]{0, 3, 5, 6, 7, 10});
+
+        return ret;
+    }
+
+    public Map<String, Integer[]> createSimpleScalesMap() {
+        Map<String, Integer[]> ret = new HashMap();
+
+        ret.put("Major", new Integer[]{0, 2, 4, 5, 7, 9, 11});
+        ret.put("Minor", new Integer[]{0, 2, 3, 5, 7, 8, 10});
+
+        ret.put("Major Pentatonic", new Integer[]{0, 2, 4, 7, 9});
+        ret.put("Minor Pentatonic", new Integer[]{0, 3, 5, 7, 10});
 
         return ret;
     }

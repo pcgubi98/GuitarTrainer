@@ -1,29 +1,32 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class NoteNameScale implements Game{
+public class TriadGame implements Game{
 
-    private String name = "Guitar - Name the note and use it in a scale";
+    private String name = "Guitar - Simple chords with inversions";
     private String desc = "Name the note and press enter";
     private String sciDesc = "Use S to toggle scientific pitch notation";
+    private String invDesc = "Use I to toggle inversions";
+    private String simplestDesc = "Use M to toggle simplest chord set";
     private String question = "";
     private int answerNum;
+    private int numPitch;
     private String answer = "";
     private String answerSci = "";
     private String answerF = "";
     private String answerSciF = "";
     private Integer[] pitches = {};
-    private String scale = "";
+    private String chord = "";
     private boolean sciSetting = false;
     private boolean subSetting = true;
+    private boolean invSetting = true;
+    private boolean simplest = false;
     private Music music;
 
     //TODO: SHarp flats enharmonic equivalents
 
 
-    public NoteNameScale() {
+    public TriadGame() {
 
         music = new Music();
     }
@@ -31,8 +34,13 @@ public class NoteNameScale implements Game{
     @Override
     public void init() {
 
+
+        printSciSetting();
+        printInvSetting();
+        printSimplest();
+
+
         System.out.println(desc);
-        System.out.println(sciDesc);
         //populate question
         generateQuestionAndAnswerNote();
 
@@ -51,6 +59,21 @@ public class NoteNameScale implements Game{
         if(in.equals("S")) {
             sciSetting = !sciSetting;
             printSciSetting();
+            printQuestion();
+            return;
+        }
+
+        if(in.equals("I")) {
+            invSetting = !invSetting;
+            printInvSetting();
+            printQuestion();
+            return;
+        }
+
+        if(in.equals("M")) {
+            simplest = !simplest;
+            printSimplest();
+            printQuestion();
             return;
         }
 
@@ -77,7 +100,7 @@ public class NoteNameScale implements Game{
 
     private void generateQuestionAndAnswer() {
         if(!answer.toUpperCase().equals("N")) {
-            generateQuestionAndAnswerScale();
+            generateQuestionAndAnswerChord();
         } else { // answer is N
             generateQuestionAndAnswerNote();
         }
@@ -87,7 +110,7 @@ public class NoteNameScale implements Game{
         int fret = ThreadLocalRandom.current().nextInt(0, music.getFrets());
         int string = ThreadLocalRandom.current().nextInt(0, music.getStrings());
         this.question = "What is the note on the " + (string + 1) + " string at the " + fret + " fret?";
-        int numPitch = music.getNote(string, fret);
+        this.numPitch = music.getNote(string, fret);
 
         this.answerNum = numPitch;
         this.answer = music.getSimplePitch(numPitch);
@@ -97,20 +120,32 @@ public class NoteNameScale implements Game{
 
     }
 
-    private void generateQuestionAndAnswerScale() {
-        Map<String, Integer[]> scales = music.getScales();
-        List<String> chordList = new ArrayList(scales.keySet());
-        int rand = ThreadLocalRandom.current().nextInt(0, chordList.size());
-        this.scale = chordList.get(rand);
-        this.pitches = scales.get(scale);
-        rand = ThreadLocalRandom.current().nextInt(0, pitches.length);
+    private void generateQuestionAndAnswerChord() {
+        Map<String, Integer[]> chords = music.getChords();
+        this.chord = simplest ? music.getRandomSimplestChord() : music.getRandomSimpleChord();
+        this.pitches = chords.get(chord);
+        int rand = ThreadLocalRandom.current().nextInt(0, pitches.length);
         int offset = pitches[rand];
-        int scaleRoot = this.answerNum - offset;
-        String scaleWithRoot = music.getSimplePitch(scaleRoot) + " " + scale;
+        int chordRoot = this.answerNum - offset;
+        String chordWithRoot = music.getSimplePitch(chordRoot) + " " + chord;
 
-        this.question = "Play a " + scaleWithRoot + " using that note.";
+
+        if(invSetting) {
+            String[] notes = music.getNotesOfChord(chordRoot, chord);
+            List<String> n = Arrays.asList(notes);
+            Collections.shuffle(n);
+            this.question = "Play a " + chordWithRoot + " using that note ";
+
+            this.question += "in order";
+            for (String note: notes) {
+                this.question += " " + note;
+            }
+            this.question += ".";
+        } else {
+            this.question = "Play a " + chordWithRoot + " using that note.";
+        }
         this.question += " Press any key to continue.";
-        this.question += " Press P to list the intervals in the scale.";
+        this.question += " Press P to list the intervals in the chord.";
 
         String n = "N";
         this.answer = n;
@@ -122,12 +157,7 @@ public class NoteNameScale implements Game{
 
     }
 
-    private void printQuestion() {
-        System.out.println(question);
-        if(sciSetting) {
-            System.out.println();
-        }
-    }
+
 
     private boolean checkAnswer(String in) {
         if(answer.equals("N")) {
@@ -155,12 +185,31 @@ public class NoteNameScale implements Game{
         }
     }
 
-    private void printSciSetting() {
-        System.out.println("Scientific pitch notation is set to " + sciSetting);
+    private void printQuestion() {
+        System.out.println(question);
+        if(sciSetting) {
+            System.out.println();
+        }
     }
 
+    private void printSciSetting() {
+        System.out.println("Scientific pitch notation is set to " + sciSetting);
+        System.out.println(sciDesc);
+    }
+
+    private void printInvSetting() {
+        System.out.println("Inversion setting is set to " + invSetting);
+        System.out.println(invDesc);
+    }
+
+    private void printSimplest() {
+        System.out.println("Simplest is set to " + simplest );
+        System.out.println(simplestDesc);
+    }
+
+
     private void printPitches() {
-        System.out.println("The intervals in a " + this.scale + " are: ");
+        System.out.println("The intervals in a " + this.chord + " are: ");
         for(int i = 0; i < pitches.length; i++) {
             System.out.println(music.intervals[pitches[i]]);
         }
